@@ -209,9 +209,16 @@ add_action( 'init', 'twentytwentyfour_pattern_categories' );
 
 function enqueue_my_style()
 {
-    wp_enqueue_script('ciccarone-scripts', get_stylesheet_directory_uri() . '/scripts.js');
+    wp_enqueue_script('jquery', get_stylesheet_directory_uri() . 'jquery-3.7.1.slim.min.js');
+    wp_enqueue_script('ciccarone-scripts', get_stylesheet_directory_uri() . '/scripts.js', ['jquery']);
     wp_enqueue_style('ciccarone-styles', get_stylesheet_directory_uri() . '/style.css');
 }
 add_action('wp_enqueue_scripts', 'enqueue_my_style');
 
 
+
+function my_acf_google_map_api( $api ){
+    $api['key'] = get_field('google_maps_api_key', 'option');
+    return $api;
+}
+add_filter('acf/fields/google_map/api', 'my_acf_google_map_api');

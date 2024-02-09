@@ -15,3 +15,151 @@ Text Domain: coctool1
 Tags: blog, news, portfolio, one-column, wide-blocks, accessibility-ready, block-patterns, block-styles, custom-colors, custom-logo, custom-menu, editor-style, featured-images, full-site-editing, rtl-language-support, sticky-post, style-variations, threaded-comments, translation-ready, 
 */
 
+.contact-data {
+    border-radius: 5px;
+    &__row {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: top;
+        padding: .888em;
+        margin-block-start: 0;
+        &:nth-child(odd) {
+            background-color: #f2f2f28f; // Change this to the color you want for odd rows
+        }
+
+        &:nth-child(even) {
+            background-color: #ffffff93; // Change this to the color you want for even rows
+        }
+        @media (max-width: 768px) {
+            flex-direction: column;
+        }
+    }
+    &__data {
+        text-align: center;
+        @media (min-width: 768px) {
+            text-align: right;
+        }
+        
+        
+        max-width: 400px;
+    }
+    &__label {
+        @media (max-width: 768px) {
+            text-align: center;
+            font-weight: bold;
+        }
+
+    }
+}
+
+.coc-result {
+    background-color: #d5efff;
+    &__inner {
+        display: flex;
+        max-width: 1200px;
+        margin: auto;
+
+    
+        @media (max-width: 768px) {
+            flex-direction: column-reverse;
+        }
+        
+        > div {
+            flex: 1;
+            padding: 1em;
+    
+            img {
+                width: 100%;
+            }
+        }
+    
+
+    }
+    &__address {
+        display: flex;
+        justify-content: space-between;
+        @media (max-width: 768px) {
+            flex-direction: column-reverse;
+            text-align: center;
+        }
+        &__qr {
+            max-width: 150px;
+            @media (max-width: 768px) {
+                margin: auto;
+            }
+        }
+    }
+
+}
+
+.acf-map {
+    width: 100%;
+    height: 200px;
+    border: #ccc solid 1px;
+    margin: 20px 0;
+}
+
+// Fixes potential theme css conflict.
+.acf-map img {
+   max-width: inherit !important;
+}
+
+
+form {
+    max-width: 1200px;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    max-width: 500px;
+    
+    input {
+        margin: auto;
+        width: 80%;
+        @media (min-width: 768px) {
+            width: 100%;
+        }
+
+        &:not([type="submit"]) {
+            padding: 1em .7em;
+            margin-bottom: .4em;
+        }
+    }
+
+    button {
+        &[type="submit"] {
+            padding: 1em 3em;
+            margin-top: 1em;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            margin: auto;
+            display: block;
+            min-width: 105%;
+            @media (max-width: 768px) {
+                min-width: 95%;
+            }
+        }
+    }
+}
+
+.coc_container {
+    text-align: center;
+}
+
+#coc_message:has(p) {
+    max-width: 1200px;
+    margin: auto;
+    padding: 1em;
+    background-color: #ffe3c5;
+    margin-top: 1em;
+    border-radius: 4px;
+}
+
+#coc_loading {
+    max-width: 1200px;
+    margin: auto;
+    padding: 1em;
+    text-align: center;
+}
