@@ -12,6 +12,8 @@
  * Register block styles.
  */
 
+require_once get_stylesheet_directory() . '/inc/openapi.php';
+
 if ( ! function_exists( 'twentytwentyfour_block_styles' ) ) :
 	/**
 	 * Register custom block styles
@@ -211,3 +213,5 @@ function enqueue_my_style()
     wp_enqueue_style('ciccarone-styles', get_stylesheet_directory_uri() . '/style.css');
 }
 add_action('wp_enqueue_scripts', 'enqueue_my_style');
+
+
