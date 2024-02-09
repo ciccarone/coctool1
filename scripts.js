@@ -1,5 +1,6 @@
 window.onload = function() {
     var form = document.getElementById('coc_connect');
+    var loadingGraphic = document.getElementById('coc_loading'); // Assuming you have an element with id 'loading' for the loading graphic
 
     form.addEventListener('submit', function(e) {
         e.preventDefault();
@@ -7,18 +8,27 @@ window.onload = function() {
         var formData = new FormData(form);
 
         var xhr = new XMLHttpRequest();
-        xhr.open('POST', '/wp-admin/admin-ajax.php', true); // WordPress AJAX endpoint
+        xhr.open('POST', '/wp-admin/admin-ajax.php', true);
 
-        // Append the action to the form data
-        formData.append('action', 'coc_ajax'); // The action that triggers your PHP function
+        formData.append('action', 'coc_ajax');
 
         xhr.onload = function() {
             if (this.status == 200) {
-                console.log(this.responseText);
+                var response = JSON.parse(this.responseText);
+                var message = response.choices[0].message.content;
+
+                // Display the message on the page
+                document.getElementById('coc_message').innerText = message; // Assuming you have an element with id 'message' to display the message
+
+                // Hide the loading graphic
+                loadingGraphic.style.display = 'none';
             } else {
                 console.error('Request failed.  Returned status of ' + this.status);
             }
         };
+
+        // Show the loading graphic
+        loadingGraphic.style.display = 'block';
 
         xhr.send(formData);
     });

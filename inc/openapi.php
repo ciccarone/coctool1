@@ -10,11 +10,11 @@ function coc_send_data_to_openapi($data)
         'messages' => [
             [
                 "role" => "system",
-                "content" => "You are salesman, goal to sell contact's services: {$data}"
+                "content" => "Summarize contact's data into third-person 1-sentence business introduction script"
             ],
             [
                 "role" => "user",
-                "content" => "Summarize contact's data into third-person 1-sentence business introduction script"
+                "content" => "You are salesman, goal to sell Contact services to Inquirer specifically geared towards Inquirer's name and industry: {$data}"
             ]
         ]
     );
@@ -35,23 +35,32 @@ function coc_send_data_to_openapi($data)
 
 function coc_tool() {
     $send_string = collect_contact_data();
-    $search = '<h2>Connect with this contact</h2>';
+    $search = '<h2>Connect with '.get_the_title().'</h2>';
     $search .= '<form action="#" id="coc_connect">';
-    $search .= '<textarea name="public" placeholder="Details"></textarea>';
+    $search .= '
+    <input type="text" name="current_name" placeholder="Name" required>
+    <input type="text" name="current_industry" placeholder="Industry">
+    ';
+    $search .= '<input hidden name="current_contact" value="'.get_the_ID().'">';
     $search .= '<button type="submit">Connect</button>';
     $search .= '</form>';
-    return $search;
+
+    $message = '<div id="coc_message"></div>';
+    $loading = '<div id="coc_loading"></div>';
+    return $search . $message . $loading;
     ob_start();
-    $response = coc_send_data_to_openapi($send_string);
-    echo $response;
+    // $response = coc_send_data_to_openapi($send_string);
+    echo 'text';
     return ob_get_clean();
 }
 
 add_shortcode('coc_tool', 'coc_tool');
 
-function collect_contact_data() {
-    $id = get_the_ID();
-    $name = get_the_title();
+function collect_contact_data($id = false) {
+    if (!$id) {
+        $id = get_the_ID();
+    }
+    $name = get_the_title($id);
     $company = get_field('company', $id)[0]->post_title;
     $taxonomy  = 'service';
     $categories = get_terms($taxonomy, array('hide_empty' => false));
@@ -65,14 +74,16 @@ function collect_contact_data() {
     $title = get_field('title', $id);
     $address = get_field('address', $id);
     
-    $send_string = "Name: $name\nCompany: $company\nCategories: $category_string\nEmail: $email\nURL: $url\nTitle: $title\nAddress: $address";
+    $send_string = "Contact (Name: $name\nCompany: $company\nCategories: $category_string\nEmail: $email\nURL: $url\nTitle: $title\nAddress: $address)\n";
     return $send_string;
 }
 
 function coc_ajax() {
-    if (isset($_POST['public'])) {
-        $public = $_POST['public'];
-        $contact_data = collect_contact_data() . "\nPublic: " . $public;
+    if (isset($_POST['current_name'])) {
+        $current_name = $_POST['current_name'];
+        $current_industry = $_POST['current_industry'];
+        $current_contact = $_POST['current_contact'];
+        $contact_data = collect_contact_data($current_contact) . "Inquirer (Name: " . $current_name . "\nIndustry: " . $current_industry . ")";
         $response = coc_send_data_to_openapi($contact_data);
         echo $response;
     }
