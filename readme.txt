@@ -1,5 +1,5 @@
 === COC Tool #1 ===
-Contributors: 
+Contributors: Tony Ciccarone
 Requires at least: 6.0
 Tested up to: 6.4.3
 Requires PHP: 5.7
@@ -8,7 +8,7 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 == Description ==
 
-
+3tone Digital demo tool for CoC presentation
 
 == Changelog ==
 
