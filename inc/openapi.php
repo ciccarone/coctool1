@@ -4,8 +4,12 @@ require __DIR__ . '/../vendor/autoload.php';
 use Endroid\QrCode\QrCode;
 use Endroid\QrCode\Writer\PngWriter;
 
-function generate_qr_code($url, $id) {
-    $qrCode = QrCode::create($url);
+function generate_qr_code($url, $id, $message, $mobile) {
+    if ($url) {
+        $qrCode = QrCode::create($url);
+    } else {
+        $qrCode = QrCode::create('SMSTO:+1'.$mobile.':'.$message);
+    }
     $writer = new PngWriter();
     $result = $writer->write($qrCode);
     $result->saveToFile(__DIR__.'/qrcode--'.$id.'.png');
@@ -16,16 +20,17 @@ function coc_send_data_to_openapi($data)
     $url = 'https://api.openai.com/v1/chat/completions';
     $openapi_secret_key = get_field('openapi_key', 'option');
     $ch = curl_init($url);
+
     $postData = array(
         'model' => 'gpt-4',
         'messages' => [
             [
                 "role" => "system",
-                "content" => "Summarize contact's data into third-person 1-sentence business introduction script"
+                "content" => "Your job is to convince.  Write 2 sentences to sell the contact's services to the inquirer."
             ],
             [
                 "role" => "user",
-                "content" => "You are sales, cleverly explain why Contact's services can be used by Inquirer solely based on the industry: {$data}"
+                "content" => "Sell Contact's services in 2 sentences to Inquirer using: {$data}"
             ]
         ]
     );
@@ -84,7 +89,19 @@ function query_contact_data($id = false, $display = false) {
     $data['category_string'] = implode(', ', $category_names);
     $data['email'] = get_field('email', $id);
     $data['url'] = get_field('url', $id);
-    generate_qr_code($data['url'], $id);
+    $data['mobile'] = get_field('mobile', $id);
+    
+    
+    $current_user = wp_get_current_user();
+    $user_name = $current_user->display_name;
+    if (isset($_POST['current_name'])) {
+        $message_base = 'Hi, ' . $data['name'] .'. '. $user_name . ' let me know about your services.  My name is '. $_POST['current_name'] .' and I am in the ' . $_POST['current_industry'] . ' industry.'."\n\n".'I am interested in connecting.';
+
+        generate_qr_code(false, $id, $message_base, $data['mobile']);
+    } else {
+        generate_qr_code($data['url'], $id, false, false);
+    }
+
     $data['title'] = get_field('title', $id);
     $data['address'] = get_field('address', $id);
     if (!$display) {
@@ -124,7 +141,13 @@ function query_contact_data($id = false, $display = false) {
         $display_string_html .= '<div class="contact-data__row">';
             $display_string_html .= '<div class="contact-data__label">Company</div>';
             $display_string_html .= '<div class="contact-data__data">' . $data['company'] . '</div>';
-        $display_string_html .= '</div>';
+        $display_string_html .= '</div>';        
+        $display_string_html .= '<div class="contact-data__row">';
+            $display_string_html .= '<div class="contact-data__label">Mobile</div>';
+            $mobile = $data['mobile'];
+            $formattedMobile = preg_replace("/^(\d{3})(\d{3})(\d{4})$/", "($1) $2-$3", $mobile);
+            $display_string_html .= '<div class="contact-data__data">' . $formattedMobile . '</div>';        
+            $display_string_html .= '</div>';
         $display_string_html .= '<div class="contact-data__row">';
             $display_string_html .= '<div class="contact-data__label">Categories</div>';
             $display_string_html .= '<div class="contact-data__data">' . $data['category_string'] . '</div>';

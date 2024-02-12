@@ -23,6 +23,12 @@ window.onload = function() {
                 p.innerText = message;
                 messageElement.innerHTML = ''; // Clear the existing content
                 messageElement.appendChild(p); // Append the new paragraph element
+                
+                // Refresh the image
+                var imageElement = document.querySelector('.coc-result__address__qr img');
+                var imageUrl = new URL(imageElement.src);
+                imageUrl.searchParams.set('nocache', new Date().getTime());
+                imageElement.src = imageUrl.href;
                 // Hide the loading message
                 loadingMessage.innerText = '';
             } else {
